@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">บิล</h1>
+                <p class="lead fw-normal text-white-50 mb-0">Billing Info</p>
+            </div>
+        </div>
+    </header>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        สินค้าในตะกร้า
+                    </div>
+                    <div class="card-body">
+                        {% for product in cart_products %}
+                            {{ product.name }}:
+
+                            {% if product.is_sale %}
+                                {{ product.sale_price }}฿
+                            {% else %}
+                                {{ product.price }}฿
+                            {% endif %}
+
+                            <br>
+                            <small>
+                                จำนวน:
+                                {% for key, value in quantities.items  %}
+                                    {% if key == product.id|slugify %}
+                                        {{ value }}
+                                    {% endif %}
+                                {% endfor %}
+                            </small>
+                            <br><br>
+                        {% endfor %}
+                        ทั้งหมด: {{ totals }}฿
+                        <br><br>
+                        <a href="{% url "cart_summary" %}" class='btn btn-sm btn-outline-secondary'>แก้ไขรายการสินค้า</a>
+                    </div>
+                </div>
+                <br>
+                <div class="card">
+                    <div class="card-header">
+                        ข้อมูลการจัดส่งสินค้า
+                    </div>
+                    <div class="card-body">
+                        Name: {{ shipping_info.shipping_full_name }}<br>
+                        Email: {{ shipping_info.shipping_email }}<br>
+                        Address 1: {{ shipping_info.shipping_address1 }}<br>
+                        Address 2: {{ shipping_info.shipping_address2 }}<br>
+                        City: {{ shipping_info.shipping_city }}<br>
+                        State: {{ shipping_info.shipping_state }}<br>
+                        Zipcode: {{ shipping_info.shipping_zipcode }}<br>
+                        Country: {{ shipping_info.shipping_country }}<br>
+                        <br>
+                        <a href="{% url "checkout" %}" class='btn btn-sm btn-outline-secondary'>แก้ไขที่อยู่</a>
+                    </div>
+                </div>
+                <br>
+
+                <div class="card">
+                    <div class="card-header">
+                        ข้อมูลบิล
+                    </div>
+                    <div class="card-body">
+                        <form method='POST' action="{% url "process_order" %}">
+                            {% csrf_token %}
+                            {{ billing_form.as_p }}
+                    </div>
+                </div>
+                            <br>
+                            <button type='submit' class='btn btn-secondary'>ชำระค่าสินค้า</button> 
+                        </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
